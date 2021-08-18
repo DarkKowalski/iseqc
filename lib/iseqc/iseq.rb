@@ -2,7 +2,7 @@
 
 module Iseqc
   module Iseq
-    def self.compile_file(path, internal_path)
+    def self.compile_file(package, path, internal_path)
       options = {
         inline_const_cache: true,
         instructions_unification: true,
@@ -15,13 +15,13 @@ module Iseqc
       }.freeze
 
       bin = RubyVM::InstructionSequence.compile(File.read(path), internal_path, internal_path,
-                                                options: options).to_binary
+                                                options: options).to_binary(package)
       File.write("#{path}.rbc", bin)
 
       bin
     end
 
-    def self.compile_all(dir, ext: '.rb')
+    def self.compile_all(package, dir, ext: '.rb')
       # Resolve internal paths
       prefix = File.realpath(dir)
       args = Dir[File.join(dir, '**', "*#{ext}")].map do |src|
@@ -29,7 +29,7 @@ module Iseqc
         [src, internal_path]
       end
 
-      args.each { |arg| compile_file(*arg) }
+      args.each { |arg| compile_file(package, *arg) }
     end
   end
 end
