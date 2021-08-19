@@ -17,16 +17,20 @@ module Iseqc
       Index.new(index: Marshal.load(bin))
     end
 
+    def self.internal_path(path)
+      Pathname.new(File::SEPARATOR + path).cleanpath.to_s
+    end
+
     def dump
       Marshal.dump(@index)
     end
 
     def lookup(path)
-      @index[internal_path(path)]
+      @index[Iseqc::Index.internal_path(path)]
     end
 
     def has_path?(path)
-      @index.key?(internal_path(path))
+      @index.key?(Iseqc::Index.internal_path(path))
     end
 
     private
@@ -54,8 +58,5 @@ module Iseqc
       result
     end
 
-    def internal_path(path)
-      Pathname.new(path).cleanpath.to_s
-    end
   end
 end

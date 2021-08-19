@@ -41,7 +41,7 @@ static VALUE rb_host_page_size(VALUE self)
     return INT2NUM(host_page_size());
 }
 
-static inline uint32_t file_crc32(const uint8_t *bytes, const size_t len)
+static inline uint32_t file_crc32(const uint8_t *restrict bytes, const size_t len)
 {
     return crc32(0, bytes, len) & 0xffffffff;
 }
@@ -53,7 +53,7 @@ static inline void iseqc_new_package(const char *outfile)
 }
 
 /* Add a new 256 bits header to the beginning of the buffer */
-static inline void iseqc_new_header(const char *outfile, uint32_t index_size, uint32_t iseq_start)
+static inline void iseqc_new_header(const char *restrict outfile, uint32_t index_size, uint32_t iseq_start)
 {
     FILE *fp = fopen(outfile, "rb+");
     rewind(fp);
@@ -70,7 +70,7 @@ static inline void iseqc_new_header(const char *outfile, uint32_t index_size, ui
     fclose(fp);
 }
 
-static inline void iseqc_header_crc32(const char *outfile)
+static inline void iseqc_header_crc32(const char *restrict outfile)
 {
     FILE *fp = fopen(outfile, "rb+");
 
@@ -101,7 +101,7 @@ static inline int iseqc_index_start(void)
     return host_page_size();
 }
 
-static inline size_t iseqc_new_index(const char *outfile, const uint8_t *index_bin, size_t size)
+static inline size_t iseqc_new_index(const char *restrict outfile, const uint8_t *restrict index_bin, size_t size)
 {
     FILE *fp = fopen(outfile, "rb+");
     fseek(fp, iseqc_index_start(), SEEK_SET);
@@ -115,7 +115,7 @@ static inline size_t iseqc_new_index(const char *outfile, const uint8_t *index_b
     return iseq_start;
 }
 
-static inline void iseqc_append_iseq(const char *outfile, const uint8_t *iseq_bin, size_t start, size_t size)
+static inline void iseqc_append_iseq(const char *restrict outfile, const uint8_t *restrict iseq_bin, size_t start, size_t size)
 {
     FILE *fp = fopen(outfile, "rb+");
 
@@ -169,7 +169,7 @@ static inline uint8_t *iseqc_load_index(int fd, size_t index_size)
     return index_bin;
 }
 
-static inline uint8_t* iseqc_load_iseq(int fd, size_t abs_offset, size_t size)
+static inline uint8_t *iseqc_load_iseq(int fd, size_t abs_offset, size_t size)
 {
     uint8_t *iseq_bin = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, abs_offset);
     return iseq_bin;
@@ -196,10 +196,10 @@ static VALUE rb_iseqc_load_metadata(VALUE self, VALUE file)
 static VALUE rb_iseqc_load_iseq(VALUE self, VALUE file, VALUE iseq_start, VALUE offset, VALUE size)
 {
     int fd = open(rb_string_value_ptr(&file), O_RDONLY);
-    const uint8_t* iseq_bin = iseqc_load_iseq(fd, NUM2SIZET(iseq_start) + NUM2SIZET(offset), NUM2SIZET(size));
+    const uint8_t *iseq_bin = iseqc_load_iseq(fd, NUM2SIZET(iseq_start) + NUM2SIZET(offset), NUM2SIZET(size));
     close(fd);
 
-    return rb_external_str_new((const char*)iseq_bin, NUM2SIZET(size));
+    return rb_external_str_new((const char *)iseq_bin, NUM2SIZET(size));
 }
 
 static VALUE rb_mIseqc;

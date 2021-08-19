@@ -2,7 +2,7 @@
 
 module Iseqc
   module Iseq
-    def self.compile_file(package, path, internal_path)
+    def self.compile_file(package, path, internal_path, iseq_ext: '.rbc')
       options = {
         inline_const_cache: true,
         instructions_unification: true,
@@ -16,7 +16,7 @@ module Iseqc
 
       bin = RubyVM::InstructionSequence.compile(File.read(path), internal_path, internal_path,
                                                 options: options).to_binary(package)
-      File.write("#{path}.rbc", bin)
+      File.write(path + iseq_ext, bin)
 
       bin
     end
