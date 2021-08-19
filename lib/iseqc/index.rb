@@ -1,19 +1,32 @@
 # frozen_string_literal: true
 
+require 'pathname'
 module Iseqc
   class Index
     attr_reader :index
 
-    def initialize(src, ext: '.rbc')
+    def initialize(src = nil, ext: '.rbc', index: nil)
+      unless index.nil?
+        @index = index
+        return
+      end
       @index = scan(src, ext)
     end
 
     def self.load(bin)
-      Marshal.load(bin)
+      Index.new(index: Marshal.load(bin))
     end
 
     def dump
       Marshal.dump(@index)
+    end
+
+    def lookup(path)
+      @index[internal_path(path)]
+    end
+
+    def has_path?(path)
+      @index.key?(internal_path(path))
     end
 
     private
@@ -39,6 +52,10 @@ module Iseqc
       end
 
       result
+    end
+
+    def internal_path(path)
+      Pathname.new(path).cleanpath.to_s
     end
   end
 end
