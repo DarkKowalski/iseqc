@@ -17,11 +17,15 @@ YARV Instruction Sequence compiler and linker for RubyGems
 
 ```
 +---------------------------------------------+
-|              Header: 128 bits               |
+|              Header: 256 bits               |
 +-----------------------+---------------------+
 | MRI Version:  32 bits | Page Size:  32 bits |
 +-----------------------+---------------------+
-| Iseq Start:   32 bits | File CRC32: 32 bits |
+| Index Size:   32 bits | Iseq Start: 32 bits |
++-----------------------+---------------------+
+| File CRC32:   32 bits | Padding:    32 bits |
++-----------------------+---------------------+
+|               Padding: 32 bits              |
 +-----------------------+---------------------+
 ```
 
