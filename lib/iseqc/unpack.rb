@@ -39,7 +39,6 @@ module Iseqc
 
       private
 
-
       def load_into_memory(internal_path)
         return if @memory_map.key?(internal_path)
 
