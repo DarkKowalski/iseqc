@@ -1,6 +1,32 @@
 # iseqc
 YARV Instruction Sequence compiler and linker for RubyGems
 
+## Usage
+
+Pack
+
+```ruby
+require 'iseqc'
+package = 'example.rpk'
+source_dir = 'example'
+Iseqc::Pack.pack(package, source_dir)
+```
+
+Load
+
+```ruby
+require 'iseqc'
+package = Iseqc::Unpack.unpack('example.rpk')
+package.require 'file'
+```
+
+## Benchmark
+
+```bash
+$ ruby bench/gen_cases.rb
+$ ruby bench/bench.rb
+```
+
 ## Format
 
 ### File
